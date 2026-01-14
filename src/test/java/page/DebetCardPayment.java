@@ -22,6 +22,7 @@ public class DebetCardPayment {
     private SelenideElement continueButton = $x("//form//div[4]//button");
     private SelenideElement amount = $x("//li[4]");
     private SelenideElement successMassage = $x("//div[contains(@class, 'notification_status_ok')]//div[@class='notification__content']");
+    private SelenideElement errorMassage = $x("//div[contains(@class, 'notification_status_error')]//div[@class='notification__content']");
 
 
     public DebetCardPayment() {
@@ -45,6 +46,10 @@ public class DebetCardPayment {
 
     public void debetCardSuccessMassage(String expectedText) {
         successMassage.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
+    }
+
+    public void debetCardErrorMassage(String expectedText) {
+        errorMassage.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
     }
 
     public String getAmountFromPage() {

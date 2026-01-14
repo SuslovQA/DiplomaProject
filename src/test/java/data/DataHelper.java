@@ -42,5 +42,9 @@ public class DataHelper {
     public static CardInfo getValidPaymentData() {
        return new CardInfo(validCard, getMonth(), getYear(1), getOwner(), getCvv());
     }
+
+    public static CardInfo getValidDataWithDeclinedCard() {
+       return new CardInfo(invalidCard, getMonth(), getYear(2), getOwner(), getCvv());
+    }
 }
 

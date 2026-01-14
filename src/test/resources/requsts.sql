@@ -1,1 +1,1 @@
-select * from order_entity
+select * from payment_entity

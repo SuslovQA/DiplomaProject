@@ -73,4 +73,18 @@ public class TourOfDayTest {
 
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    void shouldDisplayError() {
+        val debetCardpayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getValidDataWithDeclinedCard();
+
+        debetCardpayment.CardInfo(paymentData);
+        debetCardpayment.debetCardErrorMassage("Ошибка! Банк отказал в проведении операции.");
+
+        val expected = "DECLINED";
+        val actual = SQLHelper.getPaymentStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
 }

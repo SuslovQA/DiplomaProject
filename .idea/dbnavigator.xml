@@ -6,11 +6,14 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
+      <assistant-state connection-id="bde694f1-bffd-44f8-930a-b23366978640" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
       <assistant-state connection-id="a452ffea-6b3f-4572-8b53-f429b21cd803" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE" selected="true">
         <tools />
       </assistant-state>
@@ -26,7 +29,7 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="a452ffea-6b3f-4572-8b53-f429b21cd803">
+    <connection id="bde694f1-bffd-44f8-930a-b23366978640">
       <console name="Connection" type="STANDARD" schema="app" session="Main" />
     </connection>
   </component>
@@ -40,13 +43,18 @@
     <prerequisites />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="a452ffea-6b3f-4572-8b53-f429b21cd803" />
+    <connection id="bde694f1-bffd-44f8-930a-b23366978640" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
   </component>
-  <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/src/test/resources/requsts.sql" connection-id="a452ffea-6b3f-4572-8b53-f429b21cd803" session-id="MAIN" current-schema="app" />
+  <component name="DBNavigator.Project.MethodExecutionManager">
+    <method-browser />
+    <execution-history>
+      <group-entries value="true" />
+      <execution-inputs />
+    </execution-history>
+    <execution-variables-cache />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -54,7 +62,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection source-id="" id="a452ffea-6b3f-4572-8b53-f429b21cd803" active="true" signed="true">
+      <connection source-id="" id="bde694f1-bffd-44f8-930a-b23366978640" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />
