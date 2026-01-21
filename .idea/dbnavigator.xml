@@ -11,7 +11,22 @@
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
+      <assistant-state connection-id="c385672f-7d08-4e9d-aab2-828366591faa" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
       <assistant-state connection-id="bde694f1-bffd-44f8-930a-b23366978640" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="d33f9bed-f835-4a78-b44f-0ad44e724e37" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="d33f9bed-f835-4a78-b44f-0ad44e724e37" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="virtual-mysql-connection" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="virtual-mysql-connection" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
         <tools />
       </assistant-state>
       <assistant-state connection-id="a452ffea-6b3f-4572-8b53-f429b21cd803" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE" selected="true">
@@ -29,7 +44,7 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="bde694f1-bffd-44f8-930a-b23366978640">
+    <connection id="b0dc56a5-93c2-4634-a253-054d4765ab0e">
       <console name="Connection" type="STANDARD" schema="app" session="Main" />
     </connection>
   </component>
@@ -43,7 +58,7 @@
     <prerequisites />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="bde694f1-bffd-44f8-930a-b23366978640" />
+    <connection id="b0dc56a5-93c2-4634-a253-054d4765ab0e" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -62,7 +77,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection source-id="" id="bde694f1-bffd-44f8-930a-b23366978640" active="true" signed="true">
+      <connection source-id="" id="b0dc56a5-93c2-4634-a253-054d4765ab0e" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />

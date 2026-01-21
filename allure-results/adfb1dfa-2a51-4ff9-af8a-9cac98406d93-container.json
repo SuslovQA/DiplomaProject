@@ -1,0 +1,1 @@
+{"uuid":"adfb1dfa-2a51-4ff9-af8a-9cac98406d93","name":"Баг","children":["f0915629-70c0-49f5-8eb8-f9df09b4754a"],"befores":[{"name":"setUp","status":"passed","stage":"finished","steps":[],"attachments":[],"parameters":[],"start":1768931979376,"stop":1768931979666}],"afters":[],"start":1768931979371,"stop":1768931985655}

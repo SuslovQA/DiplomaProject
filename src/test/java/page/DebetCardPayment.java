@@ -1,15 +1,15 @@
 package page;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import data.DataHelper.CardInfo;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.CollectionCondition.size;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.*;
 
 
 public class DebetCardPayment {
@@ -23,6 +23,11 @@ public class DebetCardPayment {
     private SelenideElement amount = $x("//li[4]");
     private SelenideElement successMassage = $x("//div[contains(@class, 'notification_status_ok')]//div[@class='notification__content']");
     private SelenideElement errorMassage = $x("//div[contains(@class, 'notification_status_error')]//div[@class='notification__content']");
+    private SelenideElement invalidDateError = $x("//span[contains(text(), 'Истёк срок действия карты')]");
+    private SelenideElement invalidParameterError = $x("//span[contains(text(), 'Неверный формат')]");
+    private SelenideElement emptyFieldError = $x("//span[contains(text(), 'Поле обязательно для заполнения')]");
+    private ElementsCollection someEmptyFieldsError = $$x("//span[@class='input__sub']");
+
 
 
     public DebetCardPayment() {
@@ -50,6 +55,31 @@ public class DebetCardPayment {
 
     public void debetCardErrorMassage(String expectedText) {
         errorMassage.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
+    }
+
+    public void debetCardErrorMassageWithInvalidParameter() {
+        invalidParameterError.shouldBe(visible);
+        emptyFieldError.shouldNotBe();
+    }
+
+    public void debetCardErrorMassageWithSomeInvalidParameters(int expectedSize) {
+        invalidParameterError.shouldBe(visible);
+        emptyFieldError.shouldNotBe(visible);
+    }
+
+    public void debetCardErrorMassageWithEmptyField() {
+       emptyFieldError.shouldBe(visible);
+       invalidParameterError.shouldNotBe(visible);
+    }
+
+    public void debetCardErrorMassageWithSomeEmptyFields(int expectedSize) {
+        someEmptyFieldsError.filterBy(text(emptyFieldError.getText())).shouldHave(size(expectedSize));
+        emptyFieldError.shouldNotBe(visible);
+    }
+
+    public void debetCardErrorMassageWithInvalidDate() {
+        invalidDateError.shouldBe(visible);
+        emptyFieldError.shouldNotBe(visible);
     }
 
     public String getAmountFromPage() {
