@@ -37,7 +37,7 @@ public class CreditPayment {
         cardNumberField.setValue(cardInfo.getCardNumber());
         monthField.setValue(cardInfo.getMonth());
         yearField.setValue(cardInfo.getYear());
-        cardOwnerField.setValue(cardInfo.getOwner());
+        cardOwnerField.setValue(cardInfo.getCardHolder());
         cvvField.setValue(cardInfo.getCvv());
         continueButton.click();
     }

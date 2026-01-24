@@ -9,6 +9,7 @@ import java.util.Locale;
 
 public class DataHelper {
     private static Faker faker = new Faker(new Locale("en"));
+    private static Faker fakerRu = new Faker(new Locale("ru"));
 
     public static String validCard = "4444 4444 4444 4441";
     public static String declinedCard = "4444 4444 4444 4442";
@@ -19,7 +20,7 @@ public class DataHelper {
         private String cardNumber;
         private String month;
         private String year;
-        private String owner;
+        private String cardHolder;
         private String cvv;
     }
 
@@ -31,12 +32,13 @@ public class DataHelper {
        return LocalDate.now().plusYears(plusYears).format(DateTimeFormatter.ofPattern("yy"));
     }
 
-    public static String getInvalidPatternOfYear() {
-       return "0";
+
+    public static String getCardHolder() {
+       return faker.name().lastName() + " " + faker.name().firstName();
     }
 
-    public static String getOwner() {
-       return faker.name().lastName() + " " + faker.name().firstName();
+    public static String getCardHolderInCyrillic() {
+       return fakerRu.name().lastName() + " " + fakerRu.name().firstName();
     }
 
     public static String getCvv() {
@@ -47,36 +49,36 @@ public class DataHelper {
        return LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
     }
 
-    public static String getLasMonth() {
+    public static String getLastMonth() {
        return LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("MM"));
     }
 
     public static CardInfo getValidPaymentData() {
-       return new CardInfo(validCard, getMonth(), getYear(1), getOwner(), getCvv());
+       return new CardInfo(validCard, getMonth(), getYear(1), getCardHolder(), getCvv());
     }
 
     public static CardInfo getValidPaymentDataWithDeclinedCard() {
-       return new CardInfo(declinedCard, getMonth(), getYear(2), getOwner(), getCvv());
+       return new CardInfo(declinedCard, getMonth(), getYear(2), getCardHolder(), getCvv());
     }
 
     public static CardInfo getValidPaymentDataWithInvalidDate() {
-       return new CardInfo(validCard, getMonth(), getYear(-1), getOwner(), getCvv());
+       return new CardInfo(validCard, getMonth(), getYear(-1), getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithCurrentDate() {
-       return new CardInfo(validCard, getCurrentMonth(), getYear(0), getOwner(), getCvv());
+       return new CardInfo(validCard, getCurrentMonth(), getYear(0), getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithEmptyCard() {
-           return new CardInfo("", getMonth(), getYear(5), getOwner(), getCvv());
+           return new CardInfo("", getMonth(), getYear(5), getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithEmptyMonth() {
-        return new CardInfo(validCard, "", getYear(4), getOwner(), getCvv());
+        return new CardInfo(validCard, "", getYear(4), getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithEmptyYear() {
-        return new CardInfo(validCard, getMonth(), "", getOwner(), getCvv());
+        return new CardInfo(validCard, getMonth(), "", getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithEmptyOwner() {
@@ -84,7 +86,7 @@ public class DataHelper {
     }
 
     public static CardInfo getPaymentDataWithEmptyCvv() {
-        return new CardInfo(validCard, getMonth(), getYear(5), getOwner(), "");
+        return new CardInfo(validCard, getMonth(), getYear(5), getCardHolder(), "");
     }
 
     public static CardInfo getPaymentDataWithAllEmptyFields() {
@@ -96,11 +98,19 @@ public class DataHelper {
     }
 
     public static CardInfo getPaymentDataWithShortCardNumber() {
-        return new CardInfo(shortCardNumber, getMonth(), getYear(4), getOwner(), getCvv());
+        return new CardInfo(shortCardNumber, getMonth(), getYear(4), getCardHolder(), getCvv());
     }
 
-    public static CardInfo getPaymentDataWithInvalidPatternOfYear() {
-        return new CardInfo(declinedCard, getMonth(), getInvalidPatternOfYear(), getOwner(), getCvv());
+    public static CardInfo getPaymentDataWithOneZeroInYear() {
+        return new CardInfo(declinedCard, getMonth(), "0", getCardHolder(), getCvv());
+    }
+
+    public static CardInfo getPaymentDataWithTwoZeroesInMonth() {
+       return new CardInfo(validCard, "00", getYear(3), getCardHolder(), getCvv());
+    }
+
+    public static CardInfo getPaymentDataWithCyrillicInCardHolder() {
+       return new CardInfo(validCard, getMonth(), getYear(2), getCardHolderInCyrillic(), getCvv());
     }
 }
 

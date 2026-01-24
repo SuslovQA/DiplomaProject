@@ -36,6 +36,29 @@ public class SQLHelper {
         }
     }
 
+     @SneakyThrows
+    public static String getCreditStatus() {
+        return executeQuery("SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1");
+    }
+
+//    @SneakyThrows
+//    public static String getPaymentStatusById(String id) {
+//        return executeQuery("SELECT status FROM payment_entity WHERE id = ?", id);
+//    }
+
+    @SneakyThrows
+    private static String executeQuery(String sql, Object... params) {
+        try (val conn = DriverManager.getConnection(url, user, pass)) {
+            val runner = new QueryRunner();
+            if (params.length > 0) {
+                return runner.query(conn, sql, new ScalarHandler<>(), params);
+            } else {
+                return runner.query(conn, sql, new ScalarHandler<>());
+            }
+        }
+    }
+
+
     /**
      * Публичный метод для получения статуса платежа из БД.
      * Метод для вызова в тестах
@@ -105,7 +128,7 @@ public class SQLHelper {
         }
         return null;
     }
-    // Метод
+
 //    @SneakyThrows
 //public static int getAmountAsInt() {
 //    String query = "SELECT amount FROM payment_entity ORDER BY created DESC LIMIT 1";

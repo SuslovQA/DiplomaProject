@@ -20,11 +20,6 @@ public class TourOfDayTest {
     @BeforeEach
     void setUp() {
         homePage = open("http://localhost:8080", HomePage.class);
-
-    }
-
-    @AfterAll
-    static void clearDB() {
         SQLHelper.clearTables();
     }
 
@@ -53,20 +48,6 @@ public class TourOfDayTest {
 
         val expected = SQLHelper.getAmountFromDb();
         val actual = debetCardPayment.getAmountFromPage();
-
-        Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
-    void shouldSuccessPaymentInCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getValidPaymentData();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditSuccessMassage("Операция одобрена Банком.");
-
-        val expected = "APPROVED";
-        val actual = SQLHelper.getPaymentStatus();
 
         Assertions.assertEquals(expected, actual);
     }
@@ -196,11 +177,49 @@ public class TourOfDayTest {
     @DisplayName("Pairwise 3")
     void shouldDisplayErrorWithDeclinedCardAndInvalidYear() {
         val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithInvalidPatternOfYear();
+        val paymentData = DataHelper.getPaymentDataWithOneZeroInYear();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidParameter();
     }
+
+    @Test
+    @DisplayName("Баг 2 нуля в месяце")
+    void shouldDisplayErrorWithTwoZeroesInMont() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentDaya = DataHelper.getPaymentDataWithTwoZeroesInMonth();
+
+        debetCardPayment.CardInfo(paymentDaya);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("Баг с кириллицей в cardHolder")
+    void shouldDisplayErrorWithCyrillicInCardHolder() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolder();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("Кредит Success")
+    void shouldSuccessCreditRequest() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getValidPaymentData();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditSuccessMassage("Операция одобрена Банком.");
+
+        val expected = "APPROVED";
+        val actual = SQLHelper.getCreditStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+
+
 
 
 //    Номер	Год	Месяц	Вдалелец	Cvv
