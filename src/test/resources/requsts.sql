@@ -1,2 +1,1 @@
-select * from payment_entity;
-select * from credit_request_entity
+SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1

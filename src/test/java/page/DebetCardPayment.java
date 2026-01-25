@@ -22,8 +22,9 @@ public class DebetCardPayment {
     private SelenideElement continueButton = $x("//form//div[4]//button");
     private SelenideElement amount = $x("//li[4]");
     private SelenideElement successMassage = $x("//div[contains(@class, 'notification_status_ok')]//div[@class='notification__content']");
-    private SelenideElement errorMassage = $x("//div[contains(@class, 'notification_status_error')]//div[@class='notification__content']");
+    private SelenideElement declineMassage = $x("//div[contains(@class, 'notification_status_error')]//div[@class='notification__content']");
     private SelenideElement invalidDateError = $x("//span[contains(text(), 'Истёк срок действия карты')]");
+    private SelenideElement invalidMonthError = $x("//span[contains(text(), 'Неверно указан срок действия карты')]");
     private SelenideElement invalidParameterError = $x("//span[contains(text(), 'Неверный формат')]");
     private SelenideElement emptyFieldError = $x("//span[contains(text(), 'Поле обязательно для заполнения')]");
     private ElementsCollection someEmptyFieldsError = $$x("//span[@class='input__sub']");
@@ -53,8 +54,8 @@ public class DebetCardPayment {
         successMassage.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
     }
 
-    public void debetCardErrorMassage(String expectedText) {
-        errorMassage.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
+    public void debetCardDeclineMassage(String expectedText) {
+        declineMassage.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
     }
 
     public void debetCardErrorMassageWithInvalidParameter() {
@@ -79,6 +80,11 @@ public class DebetCardPayment {
 
     public void debetCardErrorMassageWithInvalidDate() {
         invalidDateError.shouldBe(visible);
+        emptyFieldError.shouldNotBe(visible);
+    }
+
+    public void debetCardErrorMassageWithInvalidMonth() {
+        invalidMonthError.shouldBe(visible);
         emptyFieldError.shouldNotBe(visible);
     }
 

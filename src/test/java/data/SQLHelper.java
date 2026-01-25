@@ -36,26 +36,47 @@ public class SQLHelper {
         }
     }
 
-     @SneakyThrows
-    public static String getCreditStatus() {
-        return executeQuery("SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1");
-    }
-
+//     @SneakyThrows
+//    public static String getCreditStatus() {
+//        return executeQuery("SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1");
+//    }
+//
+//
 //    @SneakyThrows
-//    public static String getPaymentStatusById(String id) {
-//        return executeQuery("SELECT status FROM payment_entity WHERE id = ?", id);
+//    private static String executeQuery(String sql, Object... params) {
+//        try (val conn = DriverManager.getConnection(url, user, pass)) {
+//            val runner = new QueryRunner();
+//            if (params.length > 0) {
+//                return runner.query(conn, sql, new ScalarHandler<>(), params);
+//            } else {
+//                return runner.query(conn, sql, new ScalarHandler<>());
+//            }
+//        }
 //    }
 
     @SneakyThrows
-    private static String executeQuery(String sql, Object... params) {
-        try (val conn = DriverManager.getConnection(url, user, pass)) {
-            val runner = new QueryRunner();
-            if (params.length > 0) {
-                return runner.query(conn, sql, new ScalarHandler<>(), params);
-            } else {
-                return runner.query(conn, sql, new ScalarHandler<>());
-            }
+    public static String getCreditStatus() {
+        String status = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1;";
+        return getCreditStatus(status);
+    }
+
+    @SneakyThrows
+    private static String getCreditStatus(String query) {
+        var codeSQL = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1";
+        String result = "";
+        val runner = new QueryRunner();
+        try
+                (val conn = DriverManager.getConnection(
+                        url, user, pass)
+                ) {
+
+            result = runner.query(conn, codeSQL, new ScalarHandler<String>());
+            System.out.println(result);
+            return result;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
         }
+        return null;
     }
 
 
