@@ -1,1 +1,0 @@
-{"uuid":"13fc28b8-91a2-459c-ae14-da966abc032a","name":"shouldSuccessPaymentWithCurrentDate()","children":["22712e24-5fec-4b8d-b5b1-1d469cca9b87"],"befores":[{"name":"setUp","status":"passed","stage":"finished","steps":[],"attachments":[],"parameters":[],"start":1768931589183,"stop":1768931589376}],"afters":[],"start":1768931589178,"stop":1768931596351}

@@ -1,1 +1,0 @@
-{"uuid":"038d4340-aed1-491d-8296-c13816ed634f","name":"shouldSuccessPaymentInCredit()","children":["fafb7791-edd1-42ad-b09d-c203e798d499"],"befores":[{"name":"setUp","status":"passed","stage":"finished","steps":[],"attachments":[],"parameters":[],"start":1768931597614,"stop":1768931597817}],"afters":[],"start":1768931597612,"stop":1768931607817}

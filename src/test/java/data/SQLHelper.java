@@ -36,30 +36,23 @@ public class SQLHelper {
         }
     }
 
-//     @SneakyThrows
-//    public static String getCreditStatus() {
-//        return executeQuery("SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1");
-//    }
-//
-//
-//    @SneakyThrows
-//    private static String executeQuery(String sql, Object... params) {
-//        try (val conn = DriverManager.getConnection(url, user, pass)) {
-//            val runner = new QueryRunner();
-//            if (params.length > 0) {
-//                return runner.query(conn, sql, new ScalarHandler<>(), params);
-//            } else {
-//                return runner.query(conn, sql, new ScalarHandler<>());
-//            }
-//        }
-//    }
-
+    /**
+     * Публичный метод для получения статуса кредита из БД.
+     * Метод для вызова в тестах
+     *
+     * @return Возвращает строку со статусом кредита (например, 'APPROVED')
+     */
     @SneakyThrows
     public static String getCreditStatus() {
         String status = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1;";
         return getCreditStatus(status);
     }
 
+    /**
+     * Приватный метод для получения статуса кредита из БД.
+     *
+     * @return Возвразает строку со статусом кредита (например, 'APPROVED')
+     */
     @SneakyThrows
     private static String getCreditStatus(String query) {
         var codeSQL = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1";
@@ -83,6 +76,7 @@ public class SQLHelper {
     /**
      * Публичный метод для получения статуса платежа из БД.
      * Метод для вызова в тестах
+     *
      * @return Возвращает строку со статусом платежа (например, 'APPROVED')
      */
     @SneakyThrows
@@ -93,7 +87,8 @@ public class SQLHelper {
 
     /**
      * Приватный метод для получения статуса платежа из БД.
-     * @return  Возвразает строку со статусом платежа (например, 'APPROVED')
+     *
+     * @return Возвразает строку со статусом платежа (например, 'APPROVED')
      */
     @SneakyThrows
     private static String getPayStatus(String query) {
@@ -117,6 +112,7 @@ public class SQLHelper {
 
     /**
      * Публичный метод для получения из БД списанного количества средств при покупке.
+     *
      * @return Возвращает строку - количество списанных средств.
      */
     @SneakyThrows
@@ -127,6 +123,7 @@ public class SQLHelper {
 
     /**
      * Приватный метод для получения из БД списанного количества средств при покупке.
+     *
      * @return Возвращает Integer деленный на 100 преобразованный в String.
      * Делениее на 100 необходимо для сравнения в тестах, т.к в БД поле amount хранится в копейках.
      * Преобразование Integer в String необходимо для сравнения в тестах,
@@ -141,7 +138,7 @@ public class SQLHelper {
                         url, user, pass)
                 ) {
 
-           int result = runner.query(conn, codeSQL, new ScalarHandler<Integer>());
+            int result = runner.query(conn, codeSQL, new ScalarHandler<Integer>());
             System.out.println(String.valueOf(result / 100));
             return String.valueOf(result / 100);
         } catch (SQLException exception) {
@@ -149,53 +146,4 @@ public class SQLHelper {
         }
         return null;
     }
-
-//    @SneakyThrows
-//public static int getAmountAsInt() {
-//    String query = "SELECT amount FROM payment_entity ORDER BY created DESC LIMIT 1";
-//    val runner = new QueryRunner();
-//    try (val conn = DriverManager.getConnection(url, user, pass)) {
-//        // Если amount - BigDecimal в БД
-//        BigDecimal result = runner.query(conn, query, new ScalarHandler<BigDecimal>());
-//        return result != null ? result.intValue() : 0;
-//    } catch (SQLException exception) {
-//        exception.printStackTrace();
-//        return 0;
-//    }
-//}
-
-
-
-//    @SneakyThrows
-//    public static void updateUsers(String login, String password) {
-//        var dataSQL = "INSERT INTO users(login, password) VALUES (?, ?);";
-//        try (var conn = getConnection()) {
-//            runner.update(conn, dataSQL, login, password);
-//        }
-//    }
-//
-//    @SneakyThrows
-//    public static long countUsers() {
-//        var countSQL = "SELECT COUNT(*) FROM users;";
-//        try (var conn = getConnection()) {
-//            return runner.query(conn, countSQL, new ScalarHandler<>());
-//        }
-//    }
-//
-//    @SneakyThrows
-//    public static User getFirstUser() {
-//        var usersSQL = "SELECT * FROM users;";
-//        try (var conn = getConnection()) {
-//            return runner.query(conn, usersSQL, new BeanHandler<>(User.class));
-//        }
-//    }
-//
-//    @SneakyThrows
-//    public static List<User> getUsers() {
-//        var usersSQL = "SELECT * FROM users;";
-//        try (var conn = getConnection()) {
-//            return runner.query(conn, usersSQL, new BeanListHandler<>(User.class));
-//        }
-//    }
-
 }

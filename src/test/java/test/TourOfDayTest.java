@@ -1,7 +1,9 @@
 package test;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
 import data.DataHelper;
 import data.SQLHelper;
+import io.qameta.allure.selenide.AllureSelenide;
 import lombok.val;
 import org.junit.jupiter.api.*;
 import page.HomePage;
@@ -12,10 +14,10 @@ import static com.codeborne.selenide.Selenide.open;
 public class TourOfDayTest {
     HomePage homePage;
 
-//    @BeforeAll
-//    static void setUpAll() {
-//        WebDriverManager.chromedriver().setup();
-//    }
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
 
     @BeforeEach
     void setUp() {
@@ -73,7 +75,7 @@ public class TourOfDayTest {
     @DisplayName("Баг Дебетовая карта - срок действия карты 8 лет")
     void shouldSuccessPaymentWithCardValidityPeriodEightYearsDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithCardValidityPeriodEightYears();
+        val paymentData = DataHelper.getPaymentDataWithEightYearsCardValidityPeriod();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardSuccessMassage("Операция одобрена Банком.");
@@ -172,7 +174,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - Карта, месяц, год валиные, остальные пустые")
+    @DisplayName("Баг Дебетовая карта - Карта, месяц, год валидные, остальные пустые")
     void shouldDisplayErrorWithEmptyFieldsDebetCard() {
         val countOfEmptyFields = 3;
         val debetCardPayment = homePage.debetCardPayment();
@@ -183,21 +185,31 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Дебетовая ката - короткий нмер карты (11 символов)")
+    @DisplayName("Дебетовая ката - короткий номер карты (11 символов)")
     void shouldDisplayErrorWithShortNumberCardDebetCard() {
-        val countOfFields = 1;
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithShortCardNumber();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("Баг Дебетовая карта - ввод начения '0' во все поля")
+    void shouldDisplayErrorWithAllInvalidParametersDebetCard() {
+        val countOfFields = 5;
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithAllInvalidParameters();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithSomeInvalidParameters(countOfFields);
     }
 
     @Test
-    @DisplayName("Дебетовая карта - Declined карта и невалтдный год")
+    @DisplayName("Дебетовая карта - '0' в поле год")
     void shouldDisplayErrorWithDeclinedCardAndInvalidYearDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithOneZeroInYear();
+        val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidParameter();
@@ -207,19 +219,9 @@ public class TourOfDayTest {
     @DisplayName("Баг Дебетовая карта - 2 нуля в месяце")
     void shouldDisplayErrorWithTwoZeroesInMonthFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
-        val paymentDaya = DataHelper.getPaymentDataWithTwoZeroesInMonth();
+        val paymentDaya = DataHelper.getPaymentDataWithTwoZeroesInMonthField();
 
         debetCardPayment.CardInfo(paymentDaya);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Дебетовая карта - кириллица в cardHolder")
-    void shouldDisplayErrorWithCyrillicInCardHolderDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolder();
-
-        debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidParameter();
     }
 
@@ -227,14 +229,24 @@ public class TourOfDayTest {
     @DisplayName("Деетовая карта - в поле 'Месяц' значение от 13 до 99")
     void shouldDisplayErrorWithInvalidMonthDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValid();
+        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidMonth();
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - сивол в поле 'Держатель карты'")
+    @DisplayName("Баг Дебетовая карта - кириллица в cardHolder")
+    void shouldDisplayErrorWithCyrillicInCardHolderDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("Баг Дебетовая карта - сиволы в поле 'Держатель карты'")
     void shouldDisplayErrorWithSymbolInCardHolderFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithSymbolInCardHolderField();
@@ -254,7 +266,9 @@ public class TourOfDayTest {
     }
 
 
-    //Credit
+//    Credit
+
+
     @Test
     @DisplayName("Кредит - успешная оплата")
     void shouldSuccessCreditRequest() {
@@ -286,6 +300,21 @@ public class TourOfDayTest {
     }
 
     @Test
+    @DisplayName("Баг Кредит - срок действия карты 8 лет")
+    void shouldSuccessPaymentWithCardValidityPeriodEightYearsCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithEightYearsCardValidityPeriod();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditSuccessMassage("Операция одобрена Банком.");
+
+        val expected = "APPROVED";
+        val actual = SQLHelper.getCreditStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     @DisplayName("Баг Кредит - карта Declined")
     void shouldDisplayErrorWithDeclinedCardCredit() {
         val creditPayment = homePage.creditPayment();
@@ -296,21 +325,6 @@ public class TourOfDayTest {
 
         val expected = "DECLINED";
         val actual = SQLHelper.getPaymentStatus();
-
-        Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
-    @DisplayName("Баг Кредит - срок действия карты 8 лет")
-    void shouldSuccessPaymentWithCardValidityPeriodEightYearsCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithCardValidityPeriodEightYears();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditSuccessMassage("Операция одобрена Банком.");
-
-        val expected = "APPROVED";
-        val actual = SQLHelper.getCreditStatus();
 
         Assertions.assertEquals(expected, actual);
     }
@@ -367,13 +381,24 @@ public class TourOfDayTest {
 
     @Test
     @DisplayName("Баг Кредит - все поля пустые")
-    void shouldDisplayErrorWithAllEmptyFields() {
+    void shouldDisplayErrorWithAllEmptyFieldsCredit() {
         val countEmptyFields = 5;
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithAllEmptyFields();
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithSomeEmptyFields(countEmptyFields);
+    }
+
+    @Test
+    @DisplayName("Баг Кредит - Карта, месяц, год валидные, остальные пустые")
+    void shouldDisplayErrorWithEmptyFieldsCredit() {
+        val countOfEmptyFields = 2;
+        val creditPaymentCardPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getValidCardMonthYearAndEmptyOthers();
+
+        creditPaymentCardPayment.CardInfo(paymentData);
+        creditPaymentCardPayment.creditErrorMassageWithSomeInvalidParameters(countOfEmptyFields);
     }
 
     @Test
@@ -400,7 +425,7 @@ public class TourOfDayTest {
     @DisplayName("Кредит - один ноль в поле 'Год'")
     void shouldDisplayErrorWithZeroInYearFieldCredit() {
         val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithOneZeroInYear();
+        val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithInvalidParameter();
@@ -410,7 +435,7 @@ public class TourOfDayTest {
     @DisplayName("Баг Кредит - два ноля в поле 'Месяц'")
     void shouldDisplayErrorWithInvalidParameterMontCredit() {
         val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithTwoZeroesInMonth();
+        val paymentData = DataHelper.getPaymentDataWithTwoZeroesInMonthField();
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithInvalidParameter();
@@ -420,7 +445,7 @@ public class TourOfDayTest {
     @DisplayName("Баг Кредит - кириллица в поле 'Держатель'")
     void shouldDisplayErrorWithCyrillicInCardHolderFieldCredit() {
         val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolder();
+        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolderField();
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithInvalidParameter();
@@ -429,15 +454,15 @@ public class TourOfDayTest {
     @Test
     @DisplayName("Кредит - в поле 'Месяц' значение от 13 до 99")
     void shouldDisplayErrorWithInvalidMonthCredit() {
-        val creitPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValid();
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
 
-        creitPayment.CardInfo(paymentData);
-        creitPayment.creditErrorMassageWithInvalidMonth();
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidMonth();
     }
 
     @Test
-    @DisplayName("Баг Кредит - сивол в поле 'Держатель карты'")
+    @DisplayName("Баг Кредит - сиволы в поле 'Держатель карты'")
     void shouldDisplayErrorWithSymbolInCardHolderFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithSymbolInCardHolderField();
@@ -454,5 +479,16 @@ public class TourOfDayTest {
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("Баг Кредит - ввод начения '0' во все поля")
+    void shouldDisplayErrorWithAllInvalidParametersCredit() {
+        val countOfFields = 5;
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithAllInvalidParameters();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithSomeInvalidParameters(countOfFields);
     }
 }

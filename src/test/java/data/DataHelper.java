@@ -3,10 +3,8 @@ package data;
 import com.github.javafaker.Faker;
 import lombok.*;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -37,7 +35,6 @@ public class DataHelper {
         return LocalDate.now().plusYears(plusYears).format(DateTimeFormatter.ofPattern("yy"));
     }
 
-
     public static String getCardHolder() {
         return faker.name().lastName() + " " + faker.name().firstName();
     }
@@ -58,11 +55,27 @@ public class DataHelper {
         return String.valueOf(faker.number().numberBetween(13, 99));
     }
 
-    public static String getSymbol() {
-        List<String> sym = Stream.of("!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "`", "~", ",", ".", "<", ">", "{", "}", "[", "]")
+    public static String getInvalidYear() {
+        return String.valueOf(faker.number().numberBetween(55, 99));
+    }
+
+    public static String getInvalidCvv() {
+        return faker.numerify("##");
+    }
+
+    public static String getZero() {
+        return "0";
+    }
+
+    public static String getSymbols() {
+        List<String> symbols = Stream.of("!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+",
+                        "`", "~", ",", ".", "<", ">", "{", "}", "[", "]")
                 .collect(Collectors.toList());
 
-        return sym.get(faker.number().numberBetween(0, sym.size()));
+        String symbol = symbols.get(faker.number().numberBetween(0, symbols.size()));
+        String resultString = symbol + symbol + symbol + symbol + symbol + symbol;
+
+        return resultString;
     }
 
     public static CardInfo getValidPaymentData() {
@@ -113,27 +126,31 @@ public class DataHelper {
         return new CardInfo(shortCardNumber, getMonth(), getYear(4), getCardHolder(), getCvv());
     }
 
-    public static CardInfo getPaymentDataWithOneZeroInYear() {
-        return new CardInfo(declinedCard, getMonth(), "0", getCardHolder(), getCvv());
+    public static CardInfo getPaymentDataWithAllInvalidParameters() {
+        return new CardInfo(getZero(), getZero(), getZero(), getZero(), getZero());
     }
 
-    public static CardInfo getPaymentDataWithTwoZeroesInMonth() {
+    public static CardInfo getPaymentDataWithOneZeroInYearField() {
+        return new CardInfo(validCard, getMonth(), getZero(), getCardHolder(), getCvv());
+    }
+
+    public static CardInfo getPaymentDataWithTwoZeroesInMonthField() {
         return new CardInfo(validCard, "00", getYear(3), getCardHolder(), getCvv());
     }
 
-    public static CardInfo getPaymentDataWithCyrillicInCardHolder() {
+    public static CardInfo getPaymentDataWithCyrillicInCardHolderField() {
         return new CardInfo(validCard, getMonth(), getYear(2), getCardHolderInCyrillic(), getCvv());
     }
 
-    public static CardInfo getPaymentDataWithMonthMoreThanValid() {
+    public static CardInfo getPaymentDataWithMonthMoreThanValidValue() {
         return new CardInfo(validCard, getInvalidMonth(), getYear(5), getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithSymbolInCardHolderField() {
-        return new CardInfo(validCard, getMonth(), getYear(4), getSymbol(), getCvv());
+        return new CardInfo(validCard, getMonth(), getYear(4), getSymbols(), getCvv());
     }
 
-    public static CardInfo getPaymentDataWithCardValidityPeriodEightYears() {
+    public static CardInfo getPaymentDataWithEightYearsCardValidityPeriod() {
         return new CardInfo(validCard, getMonth(), getYear(8), getCardHolder(), getCvv());
     }
 

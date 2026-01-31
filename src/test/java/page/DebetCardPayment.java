@@ -26,9 +26,9 @@ public class DebetCardPayment {
     private SelenideElement invalidDateError = $x("//span[contains(text(), 'Истёк срок действия карты')]");
     private SelenideElement invalidMonthError = $x("//span[contains(text(), 'Неверно указан срок действия карты')]");
     private SelenideElement invalidParameterError = $x("//span[contains(text(), 'Неверный формат')]");
+    private ElementsCollection someInvalidParametersError = $$x("//span[contains(text(), 'Неверный формат')]");
     private SelenideElement emptyFieldError = $x("//span[contains(text(), 'Поле обязательно для заполнения')]");
     private ElementsCollection someEmptyFieldsError = $$x("//span[@class='input__sub']");
-
 
 
     public DebetCardPayment() {
@@ -64,13 +64,13 @@ public class DebetCardPayment {
     }
 
     public void debetCardErrorMassageWithSomeInvalidParameters(int expectedSize) {
-        invalidParameterError.shouldBe(visible);
+        someInvalidParametersError.shouldHave(size(expectedSize));
         emptyFieldError.shouldNotBe(visible);
     }
 
     public void debetCardErrorMassageWithEmptyField() {
-       emptyFieldError.shouldBe(visible);
-       invalidParameterError.shouldNotBe(visible);
+        emptyFieldError.shouldBe(visible);
+        invalidParameterError.shouldNotBe(visible);
     }
 
     public void debetCardErrorMassageWithSomeEmptyFields(int expectedSize) {
@@ -89,8 +89,9 @@ public class DebetCardPayment {
     }
 
     public String getAmountFromPage() {
-      String amountText = amount.getText();
+        String amountText = amount.getText();
         String[] amountArray = amountText.split(" ");
+
         return amountArray[1] + amountArray[2];
     }
 }

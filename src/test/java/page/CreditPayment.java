@@ -24,6 +24,7 @@ public class CreditPayment {
     private SelenideElement declineMassage = $x("//div[contains(@class, 'notification_status_error')]//div[@class='notification__content']");
     private SelenideElement invalidDateError = $x("//span[contains(text(), 'Истёк срок действия карты')]");
     private SelenideElement invalidParameterError = $x("//span[contains(text(), 'Неверный формат')]");
+    private ElementsCollection someInvalidParametersError = $$x("//span[contains(text(), 'Неверный формат')]");
     private SelenideElement emptyFieldError = $x("//span[contains(text(), 'Поле обязательно для заполнения')]");
     private SelenideElement invalidMonthError = $x("//span[contains(text(), 'Неверно указан срок действия карты')]");
     private ElementsCollection someEmptyFieldsError = $$x("//span[@class='input__sub']");
@@ -62,7 +63,7 @@ public class CreditPayment {
     }
 
     public void creditErrorMassageWithSomeInvalidParameters(int expectedSize) {
-        invalidParameterError.shouldBe(visible);
+        someInvalidParametersError.shouldHave(size(expectedSize));
         emptyFieldError.shouldNotBe(visible);
     }
 
