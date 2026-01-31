@@ -59,7 +59,7 @@ public class DataHelper {
     }
 
     public static String getSymbol() {
-        List<String> sym = Stream.of("!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "`", "~")
+        List<String> sym = Stream.of("!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+", "`", "~", ",", ".", "<", ">", "{", "}", "[", "]")
                 .collect(Collectors.toList());
 
         return sym.get(faker.number().numberBetween(0, sym.size()));
@@ -135,6 +135,10 @@ public class DataHelper {
 
     public static CardInfo getPaymentDataWithCardValidityPeriodEightYears() {
         return new CardInfo(validCard, getMonth(), getYear(8), getCardHolder(), getCvv());
+    }
+
+    public static CardInfo getPaymentDataWithNumberInCardHolderField() {
+        return new CardInfo(validCard, getMonth(), getYear(1), faker.numerify("#### #####"), getCvv());
     }
 }
 

@@ -141,7 +141,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - с пустым полем 'CVV'")
+    @DisplayName("2 бага Дебетовая карта - с пустым полем 'CVV'")
     void shouldDisplayErrorWithEmptyCvvFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCvv();
@@ -238,6 +238,16 @@ public class TourOfDayTest {
     void shouldDisplayErrorWithSymbolInCardHolderFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithSymbolInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("Баг Дебетовая карта - цифры в поле 'Держатель карты'")
+    void shouldDisplayErrorWithNumberInCardHolderFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithNumberInCardHolderField();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidParameter();
@@ -346,7 +356,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - пустое поле 'CVV'")
+    @DisplayName("2 Бага Кредит - пустое поле 'CVV'")
     void shouldDisplayErrorWithEmptyCvvFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCvv();
@@ -436,28 +446,13 @@ public class TourOfDayTest {
         creditPayment.creditErrorMassageWithInvalidParameter();
     }
 
+    @Test
+    @DisplayName("Баг Кредит - цифры в поле 'Держатель карты'")
+    void shouldDisplayErrorWithNumberInCardHolderFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithNumberInCardHolderField();
 
-//    Номер	Год	Месяц	Вдалелец	Cvv
-////    Валид	 	01
-////    Валид	29	12	Rand	000
-////    Невалид	 	12	Rand Rand	777
-////    Невалид	29	05	Rand Rand
-//    Невалид	22	05	 	000
-//    Невалид	22	01	Rand	777
-//            29	05	Rand	777
-//            22	01	Rand Rand
-// 	22	12	Rand Rand	000
-//            05	 	777
-//    Валид	22	12	 	777
-//    Валид	22	05	Rand
-//    Валид	 	05	Rand Rand	000
-//    Валид	29	01	Rand Rand	777
-
-
-//    Приложение в собственной СУБД должно сохранять информацию о том, успешно ли был совершён платёж и каким способом.
-//    Данные карт при этом сохранять не допускается.
-//    Заявлена поддержка двух СУБД. Вы должны это проверить:
-//MySQL;
-//PostgreSQL.
-
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
 }
