@@ -3,6 +3,7 @@ package test;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import data.DataHelper;
 import data.SQLHelper;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.val;
 import org.junit.jupiter.api.*;
@@ -17,6 +18,7 @@ public class TourOfDayTest {
     @BeforeAll
     static void setUpAll() {
         SelenideLogger.addListener("allure", new AllureSelenide());
+        WebDriverManager.chromedriver().setup();
     }
 
     @BeforeEach
@@ -25,8 +27,10 @@ public class TourOfDayTest {
         SQLHelper.clearTables();
     }
 
+    //Payment Gate
+
     @Test
-    @DisplayName("Дебетовая карта успешная оплата")
+    @DisplayName("1.1 Заполнение валидными данными, Payment Gate (позитивный сценарий)")
     void shouldSuccessPaymentWithDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getValidPaymentData();
@@ -42,7 +46,7 @@ public class TourOfDayTest {
 
 
     @Test
-    @DisplayName("Дебетовая карта - сравнение списанной суммы с карты и суммы на странице оплаты в UI")
+    @DisplayName("1.2 Сравнение суммы оплаты на странице (в UI) и списанной суммы с карты (в DB), Payment Gate (позитивный сценарий)")
     void shouldMatchPaymentAmountOnPageWithAmountInDB() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getValidPaymentData();
@@ -57,7 +61,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Дебетовая карта - успешная оплата с текущей датой")
+    @DisplayName("1.3 Заполнение валидными данными с текущей датой, Payment Gate (позитивный сценарий)")
     void shouldSuccessPaymentWithCurrentDatePayInfoDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithCurrentDate();
@@ -72,7 +76,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - срок действия карты 8 лет")
+    @DisplayName("1.4 Заполнение валидными данными (срок действия карты '8' лет от текущей даты),  Payment Gate (позитивный сценарий)")
     void shouldSuccessPaymentWithCardValidityPeriodEightYearsDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEightYearsCardValidityPeriod();
@@ -87,7 +91,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - Отображение отклонения платеже с картой DECLINED")
+    @DisplayName("1.5 Отображение отклонения платежа с картой 'DECLINED',  Payment Gate (позитивный сценарий)")
     void shouldDisplayDeclinedMassageWithDeclinedCardDebetCard() {
         val debetCardpayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getValidPaymentDataWithDeclinedCard();
@@ -103,7 +107,7 @@ public class TourOfDayTest {
 
 
     @Test
-    @DisplayName("Баг Дебетовая карта - с пустым полем 'Номер карты'")
+    @DisplayName("2.1 Ввод данных с пустым полем 'Номер карты', Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithEmptyCardNumberFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCard();
@@ -113,7 +117,17 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - с пустым полем 'Месяц'")
+    @DisplayName("2.2 Ввод данных с коротким номером карты (11 символов) в поле 'Номер карты', Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithShortNumberCardDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithShortCardNumber();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("3.1 Ввод данных с пустым полем 'Месяц', Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithEmptyMonthFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyMonth();
@@ -123,7 +137,27 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - с пустым полем 'Год'")
+    @DisplayName("3.2 Ввод данных с заполнением поля 'Месяц' значением '00', Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithTwoZeroesInMonthFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentDaya = DataHelper.getPaymentDataWithTwoZeroesInMonthField();
+
+        debetCardPayment.CardInfo(paymentDaya);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("3.3 Ввод данных с заполнением поля 'Месяц' значением от 13 до 99, Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithInvalidMonthDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidMonth();
+    }
+
+    @Test
+    @DisplayName("4.1 Ввод данных с пустым полем 'Год', Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithEmptyYearFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyYear();
@@ -133,7 +167,27 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Дебетовая карта - с пустым полем 'Держатель'")
+    @DisplayName("4.2 Ввод данных с заполнением поля 'Год' значением 'прошлый год от текущего', Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithInvalidDateDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getValidPaymentDataWithInvalidDate();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidDate();
+    }
+
+    @Test
+    @DisplayName("4.3 Ввод данных с заполнением поля 'Год' значением '0', Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithDeclinedCardAndInvalidYearDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("5.1 Ввод данных с пустым полем 'Владелец', Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithEmptyCardHolderFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCardHolder();
@@ -143,7 +197,37 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("2 бага Дебетовая карта - с пустым полем 'CVV'")
+    @DisplayName("5.2 Ввод данных с заполнением поля 'Владелец' значением на кириллице, Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithCyrillicInCardHolderDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("5.3 Ввод данных с заполнением поля 'Владелец' значением с символами, Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithSymbolsInCardHolderFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithSymbolsInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("5.4 Ввод данных с заполнением поля 'Владелец' числовым значением, Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithNumberInCardHolderFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithNumberInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("6.1 Ввод данных с пустым полем 'CVC/CVV', Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithEmptyCvvFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCvv();
@@ -153,7 +237,17 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Дебетовая карта - со всеми пустыми полями")
+    @DisplayName("6.2 Ввод данных с заполнениме поля 'CVC/CVV' значением '0', Payment Gate (негативный сценарий)")
+    void shouldDisplayErrorWithZeroInCvvFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithZeroInCvv();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("7.1 Отправка формы со всеми пустыми полями, Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithAllEmptyFieldsDebetCard() {
         val countOfEmptyFields = 5;
         val debetCardPayment = homePage.debetCardPayment();
@@ -164,38 +258,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Дебетовая карта - невалидная дата (прошлый год от текущего)")
-    void shouldDisplayErrorWithInvalidDateDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getValidPaymentDataWithInvalidDate();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidDate();
-    }
-
-    @Test
-    @DisplayName("Баг Дебетовая карта - Карта, месяц, год валидные, остальные пустые")
-    void shouldDisplayErrorWithEmptyFieldsDebetCard() {
-        val countOfEmptyFields = 3;
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getValidCardMonthYearAndEmptyOthers();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithSomeEmptyFields(countOfEmptyFields);
-    }
-
-    @Test
-    @DisplayName("Дебетовая ката - короткий номер карты (11 символов)")
-    void shouldDisplayErrorWithShortNumberCardDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithShortCardNumber();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Дебетовая карта - ввод начения '0' во все поля")
+    @DisplayName("7.2 Ввод значения '0' во все поля, Payment Gate (негативынй сценарий)")
     void shouldDisplayErrorWithAllInvalidParametersDebetCard() {
         val countOfFields = 5;
         val debetCardPayment = homePage.debetCardPayment();
@@ -206,71 +269,20 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Дебетовая карта - '0' в поле год")
-    void shouldDisplayErrorWithDeclinedCardAndInvalidYearDebetCard() {
+    @DisplayName("8.1 Ввод валидных данных в поля 'Номер Карты', 'Месяц', 'Год', остальные поля не заполнены, Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithEmptyFieldsDebetCard() {
+        val countOfEmptyFields = 3;
         val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
+        val paymentData = DataHelper.getValidCardMonthYearAndEmptyOthers();
 
         debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+        debetCardPayment.debetCardErrorMassageWithSomeEmptyFields(countOfEmptyFields);
     }
 
-    @Test
-    @DisplayName("Баг Дебетовая карта - 2 нуля в месяце")
-    void shouldDisplayErrorWithTwoZeroesInMonthFieldDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentDaya = DataHelper.getPaymentDataWithTwoZeroesInMonthField();
-
-        debetCardPayment.CardInfo(paymentDaya);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
-    }
+    //Credit
 
     @Test
-    @DisplayName("Деетовая карта - в поле 'Месяц' значение от 13 до 99")
-    void shouldDisplayErrorWithInvalidMonthDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidMonth();
-    }
-
-    @Test
-    @DisplayName("Баг Дебетовая карта - кириллица в cardHolder")
-    void shouldDisplayErrorWithCyrillicInCardHolderDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolderField();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Дебетовая карта - сиволы в поле 'Держатель карты'")
-    void shouldDisplayErrorWithSymbolInCardHolderFieldDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithSymbolInCardHolderField();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Дебетовая карта - цифры в поле 'Держатель карты'")
-    void shouldDisplayErrorWithNumberInCardHolderFieldDebetCard() {
-        val debetCardPayment = homePage.debetCardPayment();
-        val paymentData = DataHelper.getPaymentDataWithNumberInCardHolderField();
-
-        debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
-    }
-
-
-//    Credit
-
-
-    @Test
-    @DisplayName("Кредит - успешная оплата")
+    @DisplayName("1.1 Заполнение валидными данными, Credit Gate (позитивный сценарий)")
     void shouldSuccessCreditRequest() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getValidPaymentData();
@@ -285,7 +297,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Кредит - успешная оплата с текущей датой")
+    @DisplayName("1.2 Заполнение валидными данными с текущей датой, Credit Gate (позитивный сценарий)")
     void shouldSuccessWithCurrentDatePayInfoCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithCurrentDate();
@@ -300,7 +312,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - срок действия карты 8 лет")
+    @DisplayName("1.3 Заполнение валидными данными (срок действия карты '8' лет от текущей даты), Credit Gate (позитивный сценарий)")
     void shouldSuccessPaymentWithCardValidityPeriodEightYearsCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEightYearsCardValidityPeriod();
@@ -315,7 +327,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - карта Declined")
+    @DisplayName("1.4 Отображение отклонения платежа с картой 'DECLINED', Credit Gate (позитивный сценарий)")
     void shouldDisplayErrorWithDeclinedCardCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getValidPaymentDataWithDeclinedCard();
@@ -330,7 +342,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - пустая карта")
+    @DisplayName("2.1 Ввод данных с пустым полем 'Номер карты', Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithEmptyCardFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCard();
@@ -340,7 +352,17 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - пустой месяц")
+    @DisplayName("2.2 Ввод данных с коротким номером карты (11 символов) в поле 'Номер карты', Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithShortCardNumberCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithShortCardNumber();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("3.1 Ввод данных с пустым полем 'Месяц', Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithEmptyMonthFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyMonth();
@@ -350,7 +372,27 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - пустой год")
+    @DisplayName("3.2 Ввод данных с заполнением поля 'Месяц' значением '00', Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithInvalidParameterMontCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithTwoZeroesInMonthField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("3.2 Ввод данных с заполнением поля 'Месяц' значением от 13 до 99, Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithInvalidMonthCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidMonth();
+    }
+
+    @Test
+    @DisplayName("4.1 Ввод данных с пустым полем  'Год', Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithEmptyYearFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyYear();
@@ -360,7 +402,27 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Кредит - с пустым полем 'Держатель'")
+    @DisplayName("4.2 Ввод данных с заполнением поля 'Год' значением 'прошлый год от текущего', Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithInvalidDateCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getValidPaymentDataWithInvalidDate();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidDate();
+    }
+
+    @Test
+    @DisplayName("4.3 Ввод данных с заполнением поля 'Год' значением '0', Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithZeroInYearFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("5.1 Ввод данных с пустым полем 'Владелец', Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithEmptyCardHolderFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCardHolder();
@@ -370,7 +432,37 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("2 Бага Кредит - пустое поле 'CVV'")
+    @DisplayName("5.2 Ввод данных с заполнением поля 'Владелец' значением на кириллице, Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithCyrillicInCardHolderFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolderField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("5.3 Ввод данных в поле 'Владелец' значением с символами, Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithSymbolInCardHolderFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithSymbolsInCardHolderField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("5.4 Ввод данных в поле 'Владелец' числовым значением, Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithNumberInCardHolderFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithNumberInCardHolderField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("6.1 Ввод данных с пустым полем 'CVC/CVV'")
     void shouldDisplayErrorWithEmptyCvvFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithEmptyCvv();
@@ -380,7 +472,17 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - все поля пустые")
+    @DisplayName("6.2 Ввод данных с заполнениме поля 'CVC/CVV' значением '0', Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithZeroInCvvFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithZeroInCvv();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("7.1 Отправка формы со всеми пустыми полями, Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithAllEmptyFieldsCredit() {
         val countEmptyFields = 5;
         val creditPayment = homePage.creditPayment();
@@ -391,98 +493,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("Баг Кредит - Карта, месяц, год валидные, остальные пустые")
-    void shouldDisplayErrorWithEmptyFieldsCredit() {
-        val countOfEmptyFields = 2;
-        val creditPaymentCardPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getValidCardMonthYearAndEmptyOthers();
-
-        creditPaymentCardPayment.CardInfo(paymentData);
-        creditPaymentCardPayment.creditErrorMassageWithSomeInvalidParameters(countOfEmptyFields);
-    }
-
-    @Test
-    @DisplayName("Кредит - короткий номер карты (11 символов)")
-    void shouldDisplayErrorWithShortCardNumberCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithShortCardNumber();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Кредит - истекший год")
-    void shouldDisplayErrorWithInvalidDateCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getValidPaymentDataWithInvalidDate();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidDate();
-    }
-
-    @Test
-    @DisplayName("Кредит - один ноль в поле 'Год'")
-    void shouldDisplayErrorWithZeroInYearFieldCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Кредит - два ноля в поле 'Месяц'")
-    void shouldDisplayErrorWithInvalidParameterMontCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithTwoZeroesInMonthField();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Кредит - кириллица в поле 'Держатель'")
-    void shouldDisplayErrorWithCyrillicInCardHolderFieldCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithCyrillicInCardHolderField();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Кредит - в поле 'Месяц' значение от 13 до 99")
-    void shouldDisplayErrorWithInvalidMonthCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidMonth();
-    }
-
-    @Test
-    @DisplayName("Баг Кредит - сиволы в поле 'Держатель карты'")
-    void shouldDisplayErrorWithSymbolInCardHolderFieldCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithSymbolInCardHolderField();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Кредит - цифры в поле 'Держатель карты'")
-    void shouldDisplayErrorWithNumberInCardHolderFieldCredit() {
-        val creditPayment = homePage.creditPayment();
-        val paymentData = DataHelper.getPaymentDataWithNumberInCardHolderField();
-
-        creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
-    }
-
-    @Test
-    @DisplayName("Баг Кредит - ввод начения '0' во все поля")
+    @DisplayName("7.2 Ввод значения '0' во все поля, Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithAllInvalidParametersCredit() {
         val countOfFields = 5;
         val creditPayment = homePage.creditPayment();
@@ -490,5 +501,16 @@ public class TourOfDayTest {
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithSomeInvalidParameters(countOfFields);
+    }
+
+    @Test
+    @DisplayName("8.1 Ввод валидных данных в поля 'Номер Карты', 'Месяц', 'Год', остальные поля не заполнены, Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithEmptyFieldsCredit() {
+        val countOfEmptyFields = 2;
+        val creditPaymentCardPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getValidCardMonthYearAndEmptyOthers();
+
+        creditPaymentCardPayment.CardInfo(paymentData);
+        creditPaymentCardPayment.creditErrorMassageWithSomeInvalidParameters(countOfEmptyFields);
     }
 }

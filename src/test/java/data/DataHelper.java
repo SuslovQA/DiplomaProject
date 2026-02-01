@@ -114,6 +114,10 @@ public class DataHelper {
         return new CardInfo(validCard, getMonth(), getYear(5), getCardHolder(), "");
     }
 
+    public static CardInfo getPaymentDataWithZeroInCvv() {
+        return new CardInfo(validCard, getMonth(), getYear(4), getCardHolder(), getZero());
+    }
+
     public static CardInfo getPaymentDataWithAllEmptyFields() {
         return new CardInfo("", "", "", "", "");
     }
@@ -146,7 +150,7 @@ public class DataHelper {
         return new CardInfo(validCard, getInvalidMonth(), getYear(5), getCardHolder(), getCvv());
     }
 
-    public static CardInfo getPaymentDataWithSymbolInCardHolderField() {
+    public static CardInfo getPaymentDataWithSymbolsInCardHolderField() {
         return new CardInfo(validCard, getMonth(), getYear(4), getSymbols(), getCvv());
     }
 
