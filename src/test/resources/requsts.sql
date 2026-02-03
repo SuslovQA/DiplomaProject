@@ -1,1 +1,1 @@
-SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1
+SELECT * from payment_entity

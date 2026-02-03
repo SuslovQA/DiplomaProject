@@ -24,7 +24,7 @@ public class TourOfDayTest {
     @BeforeEach
     void setUp() {
         homePage = open("http://localhost:8080", HomePage.class);
-        SQLHelper.clearTables();
+        // SQLHelper.clearTables();
     }
 
     //Payment Gate
@@ -105,6 +105,35 @@ public class TourOfDayTest {
         Assertions.assertEquals(expected, actual);
     }
 
+    @Test
+    @DisplayName("1.6 Ввод данных с заполнением поля 'Владелец' строчными (маленькими) буквами,  Payment Gate (позитивный сценарий)")
+    void shouldSuccessPaymentWithLowerCaseValueInCardHolderFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithLowerCaseValueInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardSuccessMassage("Операция одобрена Банком.");
+
+        val expected = "APPROVED";
+        val actual = SQLHelper.getPaymentStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("1.7 Ввод данных с заполнением поля 'Владелец' прописными (большими) буквами,  Payment Gate (позитивный сценарий)")
+    void shouldSuccessPaymentWithUpperCaseValueInCardHolderFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithUpperCaseValueInCardHolderField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardSuccessMassage("Операция одобрена Банком.");
+
+        val expected = "APPROVED";
+        val actual = SQLHelper.getPaymentStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
 
     @Test
     @DisplayName("2.1 Ввод данных с пустым полем 'Номер карты', Payment Gate (негативынй сценарий)")
@@ -178,9 +207,19 @@ public class TourOfDayTest {
 
     @Test
     @DisplayName("4.3 Ввод данных с заполнением поля 'Год' значением '0', Payment Gate (негативынй сценарий)")
-    void shouldDisplayErrorWithDeclinedCardAndInvalidYearDebetCard() {
+    void shouldDisplayErrorWithTwoZeroesInYearFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithOneZeroInYearField();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("4.4 Ввод данных с заполнением поля 'Год' случайным значением от '55' до '99', Payment Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithInvalidValueInYearFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithInvalidValueInYearField();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidParameter();
@@ -241,6 +280,16 @@ public class TourOfDayTest {
     void shouldDisplayErrorWithZeroInCvvFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithZeroInCvv();
+
+        debetCardPayment.CardInfo(paymentData);
+        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("6.3 Ввод данных с заполнением поля 'CVC/CVV' занчением с из двух чисел, Payment Gate (негативный сценарий)")
+    void shouldDisplayErrorWithInvalidValueInCvvFieldDebetCard() {
+        val debetCardPayment = homePage.debetCardPayment();
+        val paymentData = DataHelper.getPaymentDataWithInvalidValueInCvvField();
 
         debetCardPayment.CardInfo(paymentData);
         debetCardPayment.debetCardErrorMassageWithInvalidParameter();
@@ -342,6 +391,36 @@ public class TourOfDayTest {
     }
 
     @Test
+    @DisplayName("1.5 Ввод данных с заполнением поля 'Владелец' строчными (маленькими) буквами,  Credit Gate (позитивный сценарий)")
+    void shouldSuccessPaymentWithLowerCaseValueInCardHolderFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithLowerCaseValueInCardHolderField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditSuccessMassage("Операция одобрена Банком.");
+
+        val expected = "APPROVED";
+        val actual = SQLHelper.getCreditStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("1.6 Ввод данных с заполнением поля 'Владелец' рпрописными (большими) буквами,  Credit Gate (позитивный сценарий)")
+    void shouldSuccessPaymentWithUpperCaseValueInCardHolderFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithUpperCaseValueInCardHolderField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditSuccessMassage("Операция одобрена Банком.");
+
+        val expected = "APPROVED";
+        val actual = SQLHelper.getCreditStatus();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     @DisplayName("2.1 Ввод данных с пустым полем 'Номер карты', Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithEmptyCardFieldCredit() {
         val creditPayment = homePage.creditPayment();
@@ -422,6 +501,16 @@ public class TourOfDayTest {
     }
 
     @Test
+    @DisplayName("4.4 Ввод данных с заполнением поля 'Год' случайным значением от '55' до '99', Credit Gate (негативынй сценарий)")
+    void shouldDisplayErrorWithInvalidValueInYearFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithInvalidValueInYearField();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
     @DisplayName("5.1 Ввод данных с пустым полем 'Владелец', Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithEmptyCardHolderFieldCredit() {
         val creditPayment = homePage.creditPayment();
@@ -476,6 +565,16 @@ public class TourOfDayTest {
     void shouldDisplayErrorWithZeroInCvvFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithZeroInCvv();
+
+        creditPayment.CardInfo(paymentData);
+        creditPayment.creditErrorMassageWithInvalidParameter();
+    }
+
+    @Test
+    @DisplayName("6.3 Ввод данных с заполнением поля 'CVC/CVV' занчением с из двух чисел, Credit Gate (негативный сценарий)")
+    void shouldDisplayErrorWithInvalidValueInCvvFieldCredit() {
+        val creditPayment = homePage.creditPayment();
+        val paymentData = DataHelper.getPaymentDataWithInvalidValueInCvvField();
 
         creditPayment.CardInfo(paymentData);
         creditPayment.creditErrorMassageWithInvalidParameter();

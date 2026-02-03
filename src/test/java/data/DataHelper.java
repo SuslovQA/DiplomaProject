@@ -72,10 +72,9 @@ public class DataHelper {
                         "`", "~", ",", ".", "<", ">", "{", "}", "[", "]")
                 .collect(Collectors.toList());
 
-        String symbol = symbols.get(faker.number().numberBetween(0, symbols.size()));
-        String resultString = symbol + symbol + symbol + symbol + symbol + symbol;
+        int randomValue = faker.number().numberBetween(0, symbols.size());
 
-        return resultString;
+        return symbols.get(randomValue) + symbols.get(randomValue) + symbols.get(randomValue) + symbols.get(randomValue);
     }
 
     public static CardInfo getValidPaymentData() {
@@ -118,6 +117,10 @@ public class DataHelper {
         return new CardInfo(validCard, getMonth(), getYear(4), getCardHolder(), getZero());
     }
 
+    public static CardInfo getPaymentDataWithInvalidValueInCvvField() {
+        return new CardInfo(declinedCard, getMonth(), getYear(2), getCardHolder(), getInvalidCvv());
+    }
+
     public static CardInfo getPaymentDataWithAllEmptyFields() {
         return new CardInfo("", "", "", "", "");
     }
@@ -136,6 +139,10 @@ public class DataHelper {
 
     public static CardInfo getPaymentDataWithOneZeroInYearField() {
         return new CardInfo(validCard, getMonth(), getZero(), getCardHolder(), getCvv());
+    }
+
+    public static CardInfo getPaymentDataWithInvalidValueInYearField() {
+        return new CardInfo(declinedCard, getMonth(), getInvalidYear(), getCardHolder(), getCvv());
     }
 
     public static CardInfo getPaymentDataWithTwoZeroesInMonthField() {
@@ -161,5 +168,12 @@ public class DataHelper {
     public static CardInfo getPaymentDataWithNumberInCardHolderField() {
         return new CardInfo(validCard, getMonth(), getYear(1), faker.numerify("#### #####"), getCvv());
     }
-}
 
+    public static CardInfo getPaymentDataWithLowerCaseValueInCardHolderField() {
+        return new CardInfo(validCard, getMonth(), getYear(2), getCardHolder().toLowerCase(), getCvv());
+    }
+
+    public static CardInfo getPaymentDataWithUpperCaseValueInCardHolderField() {
+        return new CardInfo(validCard, getMonth(), getYear(2), getCardHolder().toUpperCase(), getCvv());
+    }
+}
