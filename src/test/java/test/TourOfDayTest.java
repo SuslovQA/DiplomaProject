@@ -182,7 +182,7 @@ public class TourOfDayTest {
         val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
 
         debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidMonth();
+        debetCardPayment.debetCardErrorMassageWithInvalidDate();
     }
 
     @Test
@@ -202,7 +202,7 @@ public class TourOfDayTest {
         val paymentData = DataHelper.getValidPaymentDataWithInvalidDate();
 
         debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidDate();
+        debetCardPayment.debetCardErrorMassageWithExpiredDate();
     }
 
     @Test
@@ -222,7 +222,7 @@ public class TourOfDayTest {
         val paymentData = DataHelper.getPaymentDataWithInvalidValueInYearField();
 
         debetCardPayment.CardInfo(paymentData);
-        debetCardPayment.debetCardErrorMassageWithInvalidParameter();
+        debetCardPayment.debetCardErrorMassageWithInvalidDate();
     }
 
     @Test
@@ -286,7 +286,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("6.3 Ввод данных с заполнением поля 'CVC/CVV' занчением с из двух чисел, Payment Gate (негативный сценарий)")
+    @DisplayName("6.3 Ввод данных с заполнением поля 'CVC/CVV' двузначным числом, Payment Gate (негативный сценарий)")
     void shouldDisplayErrorWithInvalidValueInCvvFieldDebetCard() {
         val debetCardPayment = homePage.debetCardPayment();
         val paymentData = DataHelper.getPaymentDataWithInvalidValueInCvvField();
@@ -467,7 +467,7 @@ public class TourOfDayTest {
         val paymentData = DataHelper.getPaymentDataWithMonthMoreThanValidValue();
 
         creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidMonth();
+        creditPayment.creditErrorMassageWithInvalidDate();
     }
 
     @Test
@@ -487,7 +487,7 @@ public class TourOfDayTest {
         val paymentData = DataHelper.getValidPaymentDataWithInvalidDate();
 
         creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidDate();
+        creditPayment.creditErrorMassageWithExpiredDate();
     }
 
     @Test
@@ -507,7 +507,7 @@ public class TourOfDayTest {
         val paymentData = DataHelper.getPaymentDataWithInvalidValueInYearField();
 
         creditPayment.CardInfo(paymentData);
-        creditPayment.creditErrorMassageWithInvalidParameter();
+        creditPayment.creditErrorMassageWithInvalidDate();
     }
 
     @Test
@@ -571,7 +571,7 @@ public class TourOfDayTest {
     }
 
     @Test
-    @DisplayName("6.3 Ввод данных с заполнением поля 'CVC/CVV' занчением с из двух чисел, Credit Gate (негативный сценарий)")
+    @DisplayName("6.3 Ввод данных с заполнением поля 'CVC/CVV' двузначным числом, Credit Gate (негативный сценарий)")
     void shouldDisplayErrorWithInvalidValueInCvvFieldCredit() {
         val creditPayment = homePage.creditPayment();
         val paymentData = DataHelper.getPaymentDataWithInvalidValueInCvvField();

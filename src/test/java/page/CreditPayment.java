@@ -22,11 +22,11 @@ public class CreditPayment {
     private SelenideElement continueButton = $x("//form//div[4]//button");
     private SelenideElement successMassage = $x("//div[contains(@class, 'notification_status_ok')]//div[@class='notification__content']");
     private SelenideElement declineMassage = $x("//div[contains(@class, 'notification_status_error')]//div[@class='notification__content']");
-    private SelenideElement invalidDateError = $x("//span[contains(text(), 'Истёк срок действия карты')]");
+    private SelenideElement expiredDateError = $x("//span[contains(text(), 'Истёк срок действия карты')]");
     private SelenideElement invalidParameterError = $x("//span[contains(text(), 'Неверный формат')]");
     private ElementsCollection someInvalidParametersError = $$x("//span[contains(text(), 'Неверный формат')]");
     private SelenideElement emptyFieldError = $x("//span[contains(text(), 'Поле обязательно для заполнения')]");
-    private SelenideElement invalidMonthError = $x("//span[contains(text(), 'Неверно указан срок действия карты')]");
+    private SelenideElement invalidDateError = $x("//span[contains(text(), 'Неверно указан срок действия карты')]");
     private ElementsCollection someEmptyFieldsError = $$x("//span[@class='input__sub']");
 
 
@@ -77,13 +77,13 @@ public class CreditPayment {
         emptyFieldError.shouldNotBe(visible);
     }
 
-    public void creditErrorMassageWithInvalidDate() {
-        invalidDateError.shouldBe(visible);
+    public void creditErrorMassageWithExpiredDate() {
+        expiredDateError.shouldBe(visible);
         emptyFieldError.shouldNotBe(visible);
     }
 
-    public void creditErrorMassageWithInvalidMonth() {
-        invalidMonthError.shouldBe(visible);
+    public void creditErrorMassageWithInvalidDate() {
+        invalidDateError.shouldBe(visible);
         emptyFieldError.shouldNotBe(visible);
     }
 }
